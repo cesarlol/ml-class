@@ -35,5 +35,7 @@ model.compile(loss='mse',
               optimizer=Adam(config.learn_rate),
               metrics=['accuracy'])
 
+#comment
+
 model.fit(X_train, y_train, epochs=10, batch_size=128, validation_data=(X_test, y_test), 
     callbacks=[WandbCallback(data_type="image", labels=class_names)])
