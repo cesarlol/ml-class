@@ -26,8 +26,8 @@ num_classes = len(class_names)
 
 (X_train, y_train), (X_test, y_test) = cifar10.load_data()
 
-X_train = X_train.astype('float32') / 255.
-X_test = X_test.astype('float32') / 255.
+#X_train = X_train.astype('float32') / 255.
+#X_test = X_test.astype('float32') / 255.
 
 # Convert class vectors to binary class matrices.
 y_train = keras.utils.to_categorical(y_train, num_classes)
@@ -35,17 +35,24 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 #Importing the ResNet50 model
 from keras.applications.resnet50 import ResNet50, preprocess_input
+from keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input
+
+X_train = preprocess_input(X_train)
+X_test = preprocess_input(X_test)
 
 #Loading the ResNet50 model with pre-trained ImageNet weights
 big_model = ResNet50(weights='imagenet', include_top=False, input_shape=(X_train.shape[1], X_train.shape[2], 3))
+mobilenet_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(X_train.shape[1], X_train.shape[2], 3))
+
 
 model = Sequential()
-model.add(big_model)
+model.add(mobilenet_model)
+#model.add(big_model.layers[1])
 model.add(Flatten())
 model.add(Dense(10, activation='softmax'))
 
 # Make the big first layer frozen for speed
-model.layers[0].trainable = False
+model.layers[0].trainable = True
 
 model.compile(loss='categorical_crossentropy',
               optimizer=Adam(config.learn_rate),
